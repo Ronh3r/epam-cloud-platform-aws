@@ -22,3 +22,8 @@ variable "sqs_queue_id" {
   description = "The **URL or ID** of the SQS Queue required by the Lambda functions."
   type        = string
 }
+
+variable "module_environment" {
+  description = "The **deployment environment** (e.g., 'dev', 'staging', or 'prod')."
+  type        = string
+}

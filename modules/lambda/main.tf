@@ -1,6 +1,6 @@
 # Rol de ejecución común para ambas Lambdas
 resource "aws_iam_role" "lambda_exec_role" {
-  name = "${var.lambda_project_name}-LambdaExecutionRole"
+  name = "${var.lambda_project_name}-lambdaexecutionrole-${var.module_environment}"
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -13,11 +13,16 @@ resource "aws_iam_role" "lambda_exec_role" {
       }
     ]
   })
+
+  tags = {
+    Name        = "${var.lambda_project_name}-lambdaexecutionrole-${var.module_environment}"
+    environment = var.module_environment
+  }
 }
 
 # Política para permitir logs
 resource "aws_iam_role_policy" "lambda_log_policy" {
-  name = "${var.lambda_project_name}-LambdaLogPolicy"
+  name = "${var.lambda_project_name}-lambdalogpolicy-${var.module_environment}"
   role = aws_iam_role.lambda_exec_role.id
 
   policy = jsonencode({
@@ -38,7 +43,7 @@ resource "aws_iam_role_policy" "lambda_log_policy" {
 
 # Política específica para el Producer (permite enviar a SQS)
 resource "aws_iam_role_policy" "producer_sqs_policy" {
-  name = "${var.lambda_project_name}-ProducerSQSPolicy"
+  name = "${var.lambda_project_name}-producersqspolicy-${var.module_environment}"
   role = aws_iam_role.lambda_exec_role.id
 
   policy = jsonencode({
@@ -57,7 +62,7 @@ resource "aws_iam_role_policy" "producer_sqs_policy" {
 
 # Política específica para el Consumer (permite recibir de SQS y escribir en DynamoDB)
 resource "aws_iam_role_policy" "consumer_data_policy" {
-  name = "${var.lambda_project_name}-ConsumerDataPolicy"
+  name = "${var.lambda_project_name}-consumerdatapolicy-${var.module_environment}"
   role = aws_iam_role.lambda_exec_role.id
 
   policy = jsonencode({
@@ -85,7 +90,6 @@ resource "aws_iam_role_policy" "consumer_data_policy" {
   depends_on = [aws_iam_role.lambda_exec_role]
 }
 
-
 ## 1. Producer Lambda
 data "archive_file" "producer_zip" {
   type        = "zip"
@@ -94,7 +98,7 @@ data "archive_file" "producer_zip" {
 }
 
 resource "aws_lambda_function" "producer" {
-  function_name    = "${var.lambda_project_name}-producer"
+  function_name    = "${var.lambda_project_name}-producer-${var.module_environment}"
   filename         = data.archive_file.producer_zip.output_path
   source_code_hash = data.archive_file.producer_zip.output_base64sha256
   role             = aws_iam_role.lambda_exec_role.arn
@@ -107,6 +111,10 @@ resource "aws_lambda_function" "producer" {
       SQS_QUEUE_URL = var.sqs_queue_id
     }
   }
+
+  tags = {
+    environment = var.module_environment
+  }
 }
 
 ## 2. Consumer Lambda
@@ -117,7 +125,7 @@ data "archive_file" "consumer_zip" {
 }
 
 resource "aws_lambda_function" "consumer" {
-  function_name    = "${var.lambda_project_name}-Consumer"
+  function_name    = "${var.lambda_project_name}-consumer-${var.module_environment}"
   filename         = data.archive_file.consumer_zip.output_path
   source_code_hash = data.archive_file.consumer_zip.output_base64sha256
   role             = aws_iam_role.lambda_exec_role.arn
@@ -128,9 +136,12 @@ resource "aws_lambda_function" "consumer" {
   environment {
     variables = {
       DYNAMODB_TABLE_NAME = var.dynamodb_name
-      # URL de una API de libros gratuita para el ejemplo (ej: Open Library API)
-      EXTERNAL_BOOK_API = "https://openlibrary.org/api/books"
+      EXTERNAL_BOOK_API   = "https://openlibrary.org/api/books"
     }
+  }
+
+  tags = {
+    environment = var.module_environment
   }
 }
 

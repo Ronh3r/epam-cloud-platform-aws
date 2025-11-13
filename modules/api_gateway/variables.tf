@@ -4,11 +4,6 @@ variable "api_gateway_project_name" {
   default     = "BookProcessor"
 }
 
-variable "api_gateway_environment" {
-  description = "The **environment stage** for the API Gateway (e.g., 'dev', 'test', or 'prod')."
-  type        = string
-}
-
 variable "producer_lambda_arn" {
   description = "The **full ARN** (Amazon Resource Name) of the producer Lambda function."
   type        = string
@@ -21,5 +16,10 @@ variable "producer_lambda_invoke_arn" {
 
 variable "producer_lambda_function_name" {
   description = "The **specific name** of the producer Lambda function."
+  type        = string
+}
+
+variable "module_environment" {
+  description = "The **deployment environment** (e.g., 'dev', 'staging', or 'prod')."
   type        = string
 }
