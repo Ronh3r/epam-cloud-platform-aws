@@ -4,7 +4,6 @@ services:
     image: localstack/localstack
     ports:
       - 4566:4566 # LocalStack Gateway
-      # - 4510-4559:4510-4559 # external services port range
     env_file:
       - .env
     environment:
@@ -15,5 +14,4 @@ services:
       SKIP_SSL_CERT_DOWNLOAD: 1
       DISABLE_EVENTS: 1
     volumes:
-      - "${LOCALSTACK_VOLUME_DIR:-./localstack/volume}:/var/lib/localstack"
       - "/var/run/docker.sock:/var/run/docker.sock"

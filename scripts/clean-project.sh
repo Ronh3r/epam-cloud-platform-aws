@@ -2,12 +2,6 @@
 
 set -e
 
-if [[ $UID != 0 ]]; then
-    echo "Please run this script with sudo:"
-    echo "sudo $0 $*"
-    exit 1
-fi
-
 cd ..
 
 echo "Destroying all resources"
@@ -17,7 +11,7 @@ echo "Turn off localstack"
 docker compose down
 
 echo "Deleting files and directories"
-rm -rf .terraform localstack .aws-sam-iacs 
+rm -rf .terraform .aws-sam-iacs 
 rm -f .terraform.lock.hcl terraform.tfstate terraform.tfstate.backup 
 
 echo "Remove AWS_*** envvar"

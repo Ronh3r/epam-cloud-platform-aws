@@ -4,17 +4,16 @@ cd ..
 
 source .env
 
-docker compose up -d
+FILE="docker-compose.yaml"
+if [ -f "$FILE" ]; then
+  docker compose up -d
+else
+  echo "The docker compose file doesn't exist."
+  exit 1
+fi
 
 terraform init
 
 terraform plan
 
 terraform apply -auto-approve
-
-# sam local start-api 
-    # --region us-east-1 \
-    # --docker-network host \
-    # --host 0.0.0.0 \
-    # --skip-pull-image \
-    # --hook-name terraform
