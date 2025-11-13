@@ -1,0 +1,3 @@
+# aws_region        = "us-east-1"
+main_project_name = "epam-tf-aws"
+environment       = "dev"
