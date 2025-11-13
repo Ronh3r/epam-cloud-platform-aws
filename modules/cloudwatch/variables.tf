@@ -13,3 +13,8 @@ variable "log_retention_days" {
   type        = number
   default     = 7
 }
+
+variable "module_environment" {
+  description = "The **deployment environment** (e.g., 'dev', 'staging', or 'prod')."
+  type        = string
+}
