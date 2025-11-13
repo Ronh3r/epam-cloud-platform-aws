@@ -37,7 +37,9 @@ epam-cloud-platform-aws
 
 1. **Install Terraform**: Ensure you have Terraform installed on your machine. You can download it from [terraform.io](https://www.terraform.io/downloads.html).
 
-2. **(Optional) Install localstack**: Ensure you have Terraform installed on your machine. You can download it from [localstack.cloud](https://docs.localstack.cloud/aws/getting-started/installation/).
+2. **Install Docker Compose**: Ensure you have docker and docker compose installed on your machine. You can download it from [docs.docker.com](https://docs.docker.com/compose/install/).
+
+3. **(Optional) Install localstack**: Ensure you have Terraform installed on your machine. You can download it from [docs.localstack.cloud](https://docs.localstack.cloud/aws/getting-started/installation/).
 
 ## Setup Instructions
 
