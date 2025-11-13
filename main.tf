@@ -1,9 +1,3 @@
-# module "iam" {
-#   source             = "./modules/iam"
-#   lambda_role_name   = var.main_project_name
-#   lambda_policy_name = var.main_project_name
-# }
-
 module "dynamodb" {
   source              = "./modules/dynamodb"
   dynamo_project_name = var.main_project_name
