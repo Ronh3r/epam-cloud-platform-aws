@@ -1,4 +1,4 @@
 variable "sqs_project_name" {
-  description = "The name of the SQS queue"
+  description = "A **core name** or **prefix** used for the SQS Queue resource."
   type        = string
 }

@@ -1,15 +1,15 @@
 variable "producer_lambda_name" {
-  description = "Nombre de la función Lambda Producer"
+  description = "The **specific name** of the Producer Lambda function."
   type        = string
 }
 
 variable "consumer_lambda_name" {
-  description = "Nombre de la función Lambda Consumer"
+  description = "The **specific name** of the Consumer Lambda function."
   type        = string
 }
 
 variable "log_retention_days" {
-  description = "Número de días para retener los logs (ej: 30, 90, 365)"
+  description = "The **number of days** to keep the CloudWatch logs (e.g., 30, 90, 365)."
   type        = number
   default     = 7
 }
