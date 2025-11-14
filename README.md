@@ -46,32 +46,32 @@ epam-cloud-platform-aws
 1. **Clone the Repository**: Clone this repository to your local machine.
 
 2. **Configure AWS Credentials and Environment Variables**: Set up your AWS credentials using the .env file (Example: [_example.env_](example.env)). You can run the following command:
-   ```
+   ```bash
    source .env
    ```
 
 3. **(Optional) Start the localstack app with Docker Compose**: Run the following command
-   ```
+   ```bash
    docker compose -d
    ```
 
 4. **Initialize Terraform**: Run the following command to initialize the Terraform configuration:
 **Note**: If you're using an aws account comment the _provider["aws"].endpoints_ code in [_providers.tf_](providers.tf)  file
-   ```
+   ```bash
    terraform init
    ```
 
 5. **Review the Plan**: Check what resources will be created by running:
-   ```
+   ```bash
    terraform plan
    ```
 
 6. **Apply the Configuration**: Deploy the infrastructure by executing:
-   ```
+   ```bash
    terraform apply
    ```
 
-7. **Test the Lambda Functions**: With the API_URL_ENDPOINT output, use the script `scripts/test-apigateway.sh` to test the Producer Lambda function.
+7. **Test the Lambda Functions**: With the API_URL_ENDPOINT output, use the script [`test-project.sh`](scripts/test-project.sh) to test the producer and consumer functions.
 
 ## Usage
 
@@ -81,22 +81,30 @@ epam-cloud-platform-aws
 ## Cleanup
 
 To remove all resources created by Terraform, run:
-
-```
+```bash
 terraform destroy
 ```
 
 ## Good to know
 
-If you're using localstack, you can check the lambda response code in the logs of the localstack-main container 
-```
+### How to get logs from LocalStack
+If you are using LocalStack, you can check the Lambda response code in the logs of the _localstack-main_ container.
+```bash
 docker logs -f localstack-main
 ```
+### How to get items from DynamoDB in LocalStack
+To get information about your items in DynamoDB from LocalStack, use this command in your terminal:
+```bash
+aws dynamodb scan \
+    --table-name "$DYNAMODB_TABLE_NAME" \
+    --endpoint-url http://localhost:4566
+```
+### How to list of AWS Log Groups in LocalStack
+To get information about your AWS Log Groups from LocalStack, use this command in your terminal:
+```bash
+aws logs describe-log-groups \
+   --endpoint-url=http://localhost:4566
+```
 
-In localstack you also can check the dynamodb itemCount with the command:
-```
-aws dynamodb describe-table \
-   --table-name <DYNAMODB_TABLE_NAME> \
-   --query 'Table.ItemCount' \
-   --endpoint http://localhost:4566
-```
+## Explanation
+*   `--endpoint-url=http://localhost:4566`: This part is very important. It tells the AWS CLI to send the command to your LocalStack instance (which usually runs on `http://localhost:4566`) instead of the real AWS Cloud.
