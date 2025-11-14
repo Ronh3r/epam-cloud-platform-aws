@@ -48,3 +48,9 @@ localstack/
 
 # Ignore .aws-sam-iacs directory
 .aws-sam-iacs
+
+# Ignore .json files in scripts directory
+scripts/*.json
+
+# Ignore directories inside consumer directory
+lambdas/consumer/*/

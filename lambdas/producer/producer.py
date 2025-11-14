@@ -4,24 +4,16 @@ import uuid
 import boto3
 
 # Inicializa el cliente SQS fuera del handler para reutilización
-# sqs = boto3.client('sqs')
-sqs = boto3.client(
-    'sqs',
-    # region_name=os.environ.get('AWS_DEFAULT_REGION'),
-    endpoint_url=os.environ.get('SQS_QUEUE_URL'),
-    aws_access_key_id=os.environ.get('AWS_ACCESS_KEY_ID'),
-    aws_secret_access_key=os.environ.get('AWS_SECRET_ACCESS_KEY')
-)
+sqs = boto3.client('sqs')
 
 SQS_QUEUE_URL = os.environ.get('SQS_QUEUE_URL')
 
 def validate_and_process_data(data):
-    """Valida y reestructura los datos de entrada."""
+    """Validate and restructure the input data."""
     
     # 1. Validar datos requeridos
     if not data or not all(k in data for k in ['title', 'author', 'isbn']):
-        # Se podría lanzar una excepción o devolver un error más específico
-        raise ValueError("Datos inválidos. Se requiere 'title', 'author' e 'isbn'.")
+        raise ValueError("Invalid data. 'title', 'author', and 'isbn' are required.")
 
     # 2. Restructurar / Añadir datos de control
     book_id = str(uuid.uuid4())
@@ -65,21 +57,21 @@ def handler(event, context):
         return {
             'statusCode': 200,
             'body': json.dumps({
-                'message': 'Libro recibido y enviado a SQS',
+                'message': f"Book '{message_data['title']}' received and sent to SQS.",
                 'bookId': message_data['bookId'],
                 'sqsMessageId': response['MessageId']
             })
         }
 
     except ValueError as e:
-        print(f"Error de validación: {e}")
+        print(f"Validation error: {e}")
         return {
             'statusCode': 400,
             'body': json.dumps({'error': str(e)})
         }
     except Exception as e:
-        print(f"Error en Producer Lambda: {e}")
+        print(f"Error in Producer Lambda: {e}")
         return {
             'statusCode': 500,
-            'body': json.dumps({'error': 'Error interno del servidor'})
+            'body': json.dumps({'error': 'Server Internal Error'})
         }

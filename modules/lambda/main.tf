@@ -117,11 +117,25 @@ resource "aws_lambda_function" "producer" {
   }
 }
 
-## 2. Consumer Lambda
+resource "null_resource" "consumer_install_dependencies" {
+  # Solo ejecuta esto si requirements.txt cambia
+  triggers = {
+    requirements_hash = filemd5("./lambdas/consumer/requirements.txt")
+  }
+
+  provisioner "local-exec" {
+    command = "pip install --platform manylinux2014_x86_64 --python-version 3.9 --only-binary=:all: -r ./lambdas/consumer/requirements.txt -t ./lambdas/consumer"
+  }
+
+}
+
 data "archive_file" "consumer_zip" {
   type        = "zip"
   source_dir  = "./lambdas/consumer"
   output_path = "./lambdas/consumer.zip"
+
+  # Asegura que las dependencias se instalen antes de crear el ZIP
+  depends_on = [null_resource.consumer_install_dependencies]
 }
 
 resource "aws_lambda_function" "consumer" {
@@ -136,7 +150,7 @@ resource "aws_lambda_function" "consumer" {
   environment {
     variables = {
       DYNAMODB_TABLE_NAME = var.dynamodb_name
-      EXTERNAL_BOOK_API   = "https://openlibrary.org/api/books"
+      EXTERNAL_BOOK_API   = "https://openlibrary.org"
     }
   }
 
